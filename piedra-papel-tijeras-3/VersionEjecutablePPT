@@ -1,0 +1,76 @@
+import random
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import PhotoImage
+opciones=["tijera","piedra","papel"]
+historial=[]
+jugador_opcion=0
+
+
+def mostrar_historial():
+        print ("\nHistorial de las ultimas  20 partidas")
+        for i, partida in enumerate(historial,1):
+            print (f"Partida {i}:{partida}")
+
+def cargar_historial(resultado, jugador_opcion, maquina_opcion):
+    entrada = f"elegiste {jugador_opcion}, contra {maquina_opcion}, por lo tanto {resultado}"
+    if len(historial) >= 20:
+        historial.pop(0)
+        historial_listbox.delete(0)
+    historial.append(entrada)
+    historial_listbox.insert(tk.END, entrada)
+
+def jugar(elegido):
+    jugador_opcion = opciones[elegido]
+    if 1 <= elegido <= 3:
+       print (f"elegiste {opciones[elegido-1]}")
+    maquina_opcion = random.choice(opciones)
+    maquina_label.config(text=f"La máquina eligió: {maquina_opcion}")
+    if jugador_opcion == maquina_opcion:
+        resultado = "Empataron."
+    elif (jugador_opcion== "tijera" and maquina_opcion== "papel") or (jugador_opcion == "piedra" and maquina_opcion== "tijera" ) or (jugador_opcion== "papel" and maquina_opcion== "piedra" ):
+       resultado="Ganaste."
+    else:
+       resultado="Perdiste."
+    resultado_label.config(text=f"resultado: {resultado}")
+    cargar_historial(resultado, jugador_opcion, maquina_opcion)
+
+root = tk.Tk()
+root.title("Piedra, Papel o Tijeras")
+root.geometry("728x410")
+
+imagen_fondo = PhotoImage(file="fondo.png")
+fondo_label = tk.Label(root, image=imagen_fondo)
+fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+resultado_label = tk.Label(root, text="Haz tu elección", font=("Arial", 14))
+resultado_label.pack()
+
+maquina_label = tk.Label(root, text="La máquina elige...", font=("Arial", 14))
+maquina_label.pack(pady=10)
+
+frame_botones = tk.Frame(root)
+frame_botones.pack(pady=20)
+
+opcion_var = tk.IntVar()
+
+imagen_tijera = PhotoImage(file="tijera.png")
+imagen_piedra = PhotoImage(file="piedra.png")
+imagen_papel = PhotoImage(file="papel.png")
+
+frame_botones = tk.Frame(root, bg="white")
+frame_botones.pack(pady=20)
+
+boton_tijera = tk.Button(frame_botones, image=imagen_tijera, command=lambda: jugar(0), borderwidth=0)
+boton_tijera.pack(side="left", padx=10)
+
+boton_piedra = tk.Button(frame_botones, image=imagen_piedra, command=lambda: jugar(1), borderwidth=0)
+boton_piedra.pack(side="left", padx=10)
+
+boton_papel = tk.Button(frame_botones, image=imagen_papel, command=lambda: jugar(2), borderwidth=0)
+boton_papel.pack(side="left", padx=10)
+
+historial_listbox = tk.Listbox(root, width=75, height=15)
+historial_listbox.pack(pady=10)
+
+root.mainloop()
